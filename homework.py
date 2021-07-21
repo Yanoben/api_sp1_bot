@@ -43,8 +43,8 @@ def parse_homework_status(homework):
 
 
 def get_homeworks(current_timestamp):
-    homework_statuses = homework
-    return homework_statuses
+    homeworks = homework
+    return homeworks
 
 
 def send_message(message):
