@@ -28,7 +28,7 @@ logger.addHandler(handler)
 
 
 def parse_homework_status(homework):
-    homework_name = homework['homework_name']
+    homework_name = homework['lesson_name']
     homework_status = homework['status']
     if homework_status == 'rejected':
         verdict = 'К сожалению, в работе нашлись ошибки.'
