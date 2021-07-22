@@ -26,15 +26,11 @@ logger.setLevel(logging.INFO)
 handler = RotatingFileHandler('logger.log', maxBytes=50000000, backupCount=5)
 logger.addHandler(handler)
 
-url = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
-headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
-homework = requests.get(url, headers=headers, params={'from_date': 0})
-homework = homework.json()
-
 
 def parse_homework_status(homework):
-    homework_name = homework['homeworks'][0]['homework_name']
-    homework_status = homework['homeworks'][0]['status']
+    # homework = homework['homeworks'][0]
+    homework_name = homework['homework_name']
+    homework_status = homework['status']
     if homework_status == 'rejected':
         verdict = 'К сожалению, в работе нашлись ошибки.'
     else:
@@ -43,8 +39,11 @@ def parse_homework_status(homework):
 
 
 def get_homeworks(current_timestamp):
-    homeworks = homework
-    return homeworks
+    url = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
+    headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
+    homework_statuses = requests.get(url, headers=headers,
+                                     params={'from_date': current_timestamp})
+    return homework_statuses.json()
 
 
 def send_message(message):
@@ -56,8 +55,8 @@ def main():
 
     while True:
         try:
-            get_homeworks(current_timestamp)
-            send_message(parse_homework_status(homework))
+            send_message(parse_homework_status(
+                get_homeworks(current_timestamp)))
             time.sleep(20 * 60)
 
         except Exception as e:
