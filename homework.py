@@ -28,7 +28,6 @@ logger.addHandler(handler)
 
 
 def parse_homework_status(homework):
-    # homework = homework['homeworks'][0]
     homework_name = homework['homework_name']
     homework_status = homework['status']
     if homework_status == 'rejected':
@@ -43,7 +42,13 @@ def get_homeworks(current_timestamp):
     headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
     homework_statuses = requests.get(url, headers=headers,
                                      params={'from_date': current_timestamp})
-    return homework_statuses.json()
+    if homework_statuses.status_code == 200:
+        logging.info('Working')
+    else:
+        logging.error('Error')
+        bot.send_message(CHAT_ID, 'Error server unavilable')
+    homework = homework_statuses.json()
+    return homework
 
 
 def send_message(message):
@@ -51,12 +56,12 @@ def send_message(message):
 
 
 def main():
-    current_timestamp = int(time.time())
+    current_timestamp = 1621680882
 
     while True:
         try:
-            send_message(parse_homework_status(
-                get_homeworks(current_timestamp)))
+            homework = get_homeworks(current_timestamp)
+            send_message(parse_homework_status(homework['homeworks'][0]))
             time.sleep(20 * 60)
 
         except Exception as e:
