@@ -62,7 +62,7 @@ def main():
         try:
             homework = get_homeworks(current_timestamp)
             send_message(parse_homework_status(homework['homeworks'][0]))
-            time.sleep(20 * 60)
+            time.sleep(60 * 60)
 
         except Exception as e:
             print(f'Бот упал с ошибкой: {e}')
