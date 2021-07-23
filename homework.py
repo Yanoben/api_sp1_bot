@@ -15,12 +15,6 @@ CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 
 bot = telegram.Bot(token=TELEGRAM_TOKEN)
 
-logging.basicConfig(
-    level=logging.DEBUG,
-    filename='main.log',
-    format='%(asctime)s, %(levelname)s, %(message)s, %(name)s'
-)
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 handler = RotatingFileHandler('logger.log', maxBytes=50000000, backupCount=5)
@@ -29,12 +23,16 @@ logger.addHandler(handler)
 
 def parse_homework_status(homework):
     homework_name = homework['homework_name']
-    homework_status = homework['status']
-    if homework_status == 'rejected':
-        verdict = 'К сожалению, в работе нашлись ошибки.'
-    else:
-        verdict = 'Ревьюеру всё понравилось, работа зачтена!'
-    return f'У вас проверили работу "{homework_name}"!\n\n{verdict}'
+    homework_status = {
+        'reviewing': 'Проект пока на ревью.',
+        'approved': 'Ревьюеру всё понравилось, работа зачтена!',
+        'rejected': 'К сожалению, в работе нашлись ошибки.'
+    }
+    for status, message in homework_status.items():
+        if homework['status'] == status:
+            return f'У вас проверили работу "{homework_name}"!\n\n{message}'
+        else:
+            return 'Понятия не имею что с проектом -_-'
 
 
 def get_homeworks(current_timestamp):
@@ -47,8 +45,11 @@ def get_homeworks(current_timestamp):
     else:
         logging.error('Error')
         bot.send_message(CHAT_ID, 'Error server unavilable')
-    homework = homework_statuses.json()
-    return homework
+    try:
+        homework = homework_statuses.json()
+        return homework
+    except Exception as e:
+        print(f'Не удается преобразовать в json(), Oшибкa: {e}')
 
 
 def send_message(message):
@@ -58,14 +59,23 @@ def send_message(message):
 def main():
     current_timestamp = 1621680882
 
+    logging.basicConfig(
+        level=logging.DEBUG,
+        filename='main.log',
+        format='%(asctime)s, %(levelname)s, %(message)s, %(name)s'
+    )
+
     while True:
         try:
             homework = get_homeworks(current_timestamp)
-            send_message(parse_homework_status(homework['homeworks'][0]))
+            try:
+                send_message(parse_homework_status(homework['homeworks'][0]))
+            except Exception as e:
+                logging.error(f'Oшибкa индекса: {e}')
             time.sleep(60 * 60)
 
         except Exception as e:
-            print(f'Бот упал с ошибкой: {e}')
+            logging.error(f'Бот упал с ошибкой: {e}')
             time.sleep(5)
 
 
