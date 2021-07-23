@@ -33,8 +33,8 @@ def parse_homework_status(homework):
         if homework_status == status:
             return (f'У вас проверили работу "{homework_name}"!'
                     f'\n\n{homework_statuses[status]}')
-        # else:
-        #    return f'Понятия не имею что с проектом "{homework_name}"-_-'
+    if homework_status not in homework_statuses.keys():
+        return f'Понятия не имею что с проектом "{homework_name}"-_-'
 
 
 def get_homeworks(current_timestamp):
