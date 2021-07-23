@@ -23,16 +23,18 @@ logger.addHandler(handler)
 
 def parse_homework_status(homework):
     homework_name = homework['homework_name']
-    homework_status = {
-        'reviewing': 'Проект пока на ревью.',
+    homework_status = homework['status']
+    homework_statuses = {
         'approved': 'Ревьюеру всё понравилось, работа зачтена!',
-        'rejected': 'К сожалению, в работе нашлись ошибки.'
+        'reviewing': 'Проект пока на ревью.',
+        'rejected': 'К сожалению, в работе нашлись ошибки.',
     }
-    for status, message in homework_status.items():
-        if homework['status'] == status:
-            return f'У вас проверили работу "{homework_name}"!\n\n{message}'
-        else:
-            return 'Понятия не имею что с проектом -_-'
+    for status in homework_statuses.keys():
+        if homework_status == status:
+            return (f'У вас проверили работу "{homework_name}"!'
+                    f'\n\n{homework_statuses[status]}')
+        # else:
+        #    return f'Понятия не имею что с проектом "{homework_name}"-_-'
 
 
 def get_homeworks(current_timestamp):
