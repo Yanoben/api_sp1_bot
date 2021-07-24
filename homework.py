@@ -18,13 +18,15 @@ bot = telegram.Bot(token=TELEGRAM_TOKEN)
 def parse_homework_status(homework):
     homework_name = homework.get('homework_name')
     homework_status = homework.get('status')
+    comment = homework.get('reviewer_comment')
     homework_statuses = {
         'approved': 'Ревьюеру всё понравилось, работа зачтена!',
         'reviewing': 'Проект пока на ревью.',
         'rejected': 'К сожалению, в работе нашлись ошибки.',
     }
     message = homework_statuses.get(homework_status)
-    return (f'У вас проверили работу "{homework_name}"!\n\n{message}')
+    return (f'У вас проверили работу "{homework_name}"!\n\n{message}'
+            f'\n\nКомментарий ревьюера : {comment}')
 
 
 def get_homeworks(current_timestamp):
