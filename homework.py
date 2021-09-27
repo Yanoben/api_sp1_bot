@@ -30,13 +30,14 @@ def parse_homework_status(homework):
 
 
 def get_homeworks(current_timestamp):
-    url = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
+    url = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
     headers = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
     homework_statuses = requests.get(url, headers=headers,
                                      params={'from_date': current_timestamp})
     if homework_statuses.status_code == 200:
         logging.info('Working')
     else:
+        print(homework_statuses)
         logging.error('Error')
         bot.send_message(CHAT_ID, 'Error server unavilable')
     try:
